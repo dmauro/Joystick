@@ -51,7 +51,7 @@ default_settings =
     axis_threshold      : 0.5
     analog_rounding     : 1
 
-class Joystick
+class JoystickManager
     constructor: (settings) ->
         @settings = {}
         for setting, value of default_settings
@@ -231,7 +231,7 @@ class Joystick
         console.log "Axis move", joystick.index, axis_names[axis_id], @round_analog value
 
 # Public
-_last_joystick_instance = null
+_last_joystick_manager = null
 
 _use_polling = ->
     return true
@@ -239,13 +239,13 @@ _use_polling = ->
 window.joystick =
     init: (settings) ->
         return console.log "Joystick not supported in your browser :(" unless window.joystick.supported()
-        joystick_instance = new Joystick settings
+        joystick_manager = new JoystickManager settings
         # Either start polling, or add listeners
         if _use_polling()
-            joystick_instance.polling_start()
+            joystick_manager.polling_start()
         else
-            joystick_instance.add_listeners()
-        return _last_joystick_instance = joystick_instance
+            joystick_manager.add_listeners()
+        return _last_joystick_manager = joystick_manager
 
     supported: ->
         return navigator.webkitGamepads? or navigator.webkitGetGamepads?
